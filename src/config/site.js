@@ -17,7 +17,7 @@ export const siteConfig = {
   profile: {
     avatar: avatarImg,
     name: "ArCl",
-    tagline: "No上班，只想 Ctrl+C 人生",
+    tagline: "好累，好想躺平~",
     bio: "懂一点 Java、会一点前端（是真的只会一点点），现在沉迷 AI、Cursor、OpenClaw 和各种 Vibe Coding。重度游戏玩家，偶尔弹吉他（练习时长两年半），喜欢周杰伦，做饭属于“跟着教程能做，但绝不想洗锅”的水平。人生信条：代码能跑就先别动。",
     location: "中国 · 安徽 · 工位摸鱼中",
   },
