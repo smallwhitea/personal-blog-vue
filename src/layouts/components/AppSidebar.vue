@@ -1,46 +1,51 @@
 <script setup>
-import { computed } from 'vue'
-import { useRoute } from 'vue-router'
+import { computed } from "vue";
+import { useRoute } from "vue-router";
+import { siteConfig } from "@/config/site";
 
 const props = defineProps({
   compact: {
     type: Boolean,
     default: false,
   },
-})
+});
 
-const route = useRoute()
-const size = computed(() => (props.compact ? 40 : 56))
-const active = computed(() => route.path)
+const route = useRoute();
+const size = computed(() => (props.compact ? 40 : 56));
+const active = computed(() => route.path);
 </script>
 
 <template>
   <div class="sidebar">
     <el-card class="profile" shadow="never">
       <div class="profile-top">
-        <el-avatar :size="size" class="avatar">L</el-avatar>
+        <el-avatar :size="size" :src="siteConfig.profile.avatar" class="avatar">
+          {{ siteConfig.profile.name?.slice(0, 1) }}
+        </el-avatar>
         <div class="meta">
-          <div class="name">你的名字</div>
-          <div class="desc">前端 / Vue / 工程化</div>
+          <div class="name">{{ siteConfig.profile.name }}</div>
+          <div class="desc">{{ siteConfig.profile.tagline }}</div>
         </div>
       </div>
 
       <div class="badges">
-        <el-tag size="small" effect="light">Vue3</el-tag>
-        <el-tag size="small" effect="light" type="success">TypeScript</el-tag>
-        <el-tag size="small" effect="light" type="info">Vite</el-tag>
+        <el-tag
+          v-for="badge in siteConfig.sidebarBadges"
+          :key="badge.name"
+          size="small"
+          effect="light"
+          :type="badge.type"
+        >
+          {{ badge.name }}
+        </el-tag>
       </div>
 
       <div class="links">
-        <el-link :underline="false" href="https://github.com/" target="_blank">
-          <el-icon><Link /></el-icon> GitHub
-        </el-link>
-        <el-link :underline="false" href="https://x.com/" target="_blank">
-          <el-icon><Link /></el-icon> X
-        </el-link>
-        <el-link :underline="false" href="mailto:you@example.com">
-          <el-icon><Message /></el-icon> Email
-        </el-link>
+        <div class="link-item">🎵 抖音：142586569</div>
+
+        <div class="link-item">🐧 QQ：1727059598</div>
+
+        <div class="link-item">💬 微信：ArC1liu</div>
       </div>
     </el-card>
 
@@ -76,6 +81,12 @@ const active = computed(() => route.path)
 </template>
 
 <style scoped lang="scss">
+.avatar {
+  flex-shrink: 0;
+  border: 2px solid #fff;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.12);
+}
+
 .sidebar {
   display: flex;
   flex-direction: column;
@@ -123,4 +134,3 @@ const active = computed(() => route.path)
   border-right: none;
 }
 </style>
-

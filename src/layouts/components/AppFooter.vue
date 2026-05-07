@@ -1,10 +1,12 @@
 <script setup>
+import { siteConfig } from '@/config/site'
+
 const year = new Date().getFullYear()
 </script>
 
 <template>
   <div class="footer">
-    <div class="left">© {{ year }} Your Name</div>
+    <div class="left">© {{ year }} {{ siteConfig.profile.name }}</div>
     <div class="right">
       <el-link :underline="false" href="https://vite.dev" target="_blank">Vite</el-link>
       <span class="dot">·</span>
@@ -19,24 +21,32 @@ const year = new Date().getFullYear()
 
 <style scoped lang="scss">
 .footer {
-  height: 56px;
+  height: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 12px;
-  font-size: 13px;
-  color: var(--text);
-  opacity: 0.9;
+  gap: var(--spacing-sm);
+  font-size: 14px;
+  color: var(--text-secondary);
+  width: min(1200px, 100%);
+  margin: 0 auto;
+  padding: 0 var(--spacing-base);
+  box-sizing: border-box;
 }
 
 .right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--spacing-sm);
 }
 
 .dot {
   opacity: 0.6;
 }
-</style>
 
+@media (max-width: 768px) {
+  .footer {
+    font-size: 13px;
+  }
+}
+</style>

@@ -44,10 +44,14 @@ const router = createRouter({
           name: 'archive',
           component: () => import('@/views/ArchiveView.vue'),
         },
+        {
+          path: 'search',
+          name: 'search',
+          component: () => import('@/views/Search.vue'),
+        },
       ],
     },
   ],
 })
 
 export default router
-

@@ -1,93 +1,9 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
+import { articles } from '@/mock/articles'
 
 const router = useRouter()
-
-// Mock 数据
-const mockPosts = ref([
-  {
-    id: '1',
-    title: 'Vue3 Composition API 最佳实践',
-    excerpt: '深入了解 Vue3 Composition API，构建更加清晰、可复用的逻辑代码。',
-    date: '2026-05-06',
-    category: 'Vue3',
-    tags: ['Vue3', '前端', '最佳实践'],
-    views: 1234,
-  },
-  {
-    id: '2',
-    title: 'Vite 构建优化指南',
-    excerpt: '如何让你的 Vite 项目构建更快？从配置到插件的完整优化方案。',
-    date: '2026-05-05',
-    category: '工程化',
-    tags: ['Vite', '性能优化', '构建'],
-    views: 892,
-  },
-  {
-    id: '3',
-    title: 'Element Plus 主题定制与开发技巧',
-    excerpt: '从 CSS 变量到自定义主题，一步步教你定制属于自己的 Element Plus。',
-    date: '2026-05-04',
-    category: 'UI',
-    tags: ['Element Plus', 'Vue3', 'UI'],
-    views: 756,
-  },
-  {
-    id: '4',
-    title: '前端工程化体系搭建',
-    excerpt: '从项目初始化到 CI/CD，完整梳理一套现代前端工程化方案。',
-    date: '2026-05-03',
-    category: '工程化',
-    tags: ['工程化', 'CI/CD', '前端'],
-    views: 1089,
-  },
-  {
-    id: '5',
-    title: 'Pinia 状态管理入门与进阶',
-    excerpt: '从基础概念到复杂场景，完整掌握 Pinia 状态管理。',
-    date: '2026-04-28',
-    category: 'Vue3',
-    tags: ['Pinia', 'Vue3', '状态管理'],
-    views: 987,
-  },
-  {
-    id: '6',
-    title: 'Vue Router 4 完整入门',
-    excerpt: '路由配置、导航守卫、动态路由，一文带你掌握 Vue Router 4。',
-    date: '2026-04-22',
-    category: 'Vue3',
-    tags: ['Vue Router', 'Vue3', '路由'],
-    views: 654,
-  },
-  {
-    id: '7',
-    title: '现代 CSS 布局技巧',
-    excerpt: 'Flexbox、Grid 以及 Container Query 等现代 CSS 布局技术的应用。',
-    date: '2026-04-15',
-    category: 'CSS',
-    tags: ['CSS', '布局', '响应式'],
-    views: 732,
-  },
-  {
-    id: '8',
-    title: '响应式设计最佳实践',
-    excerpt: '从移动端优先到设计系统，完整的响应式设计方法论。',
-    date: '2026-04-10',
-    category: '前端',
-    tags: ['响应式', '设计', '前端'],
-    views: 567,
-  },
-])
-
-const mockCategories = ref([
-  { value: '', label: '全部分类' },
-  { value: 'Vue3', label: 'Vue3' },
-  { value: '工程化', label: '工程化' },
-  { value: 'UI', label: 'UI' },
-  { value: 'CSS', label: 'CSS' },
-  { value: '前端', label: '前端' },
-])
 
 // 筛选条件
 const searchKeyword = ref('')
@@ -99,21 +15,21 @@ const pageSize = ref(4)
 
 // 过滤后的文章
 const filteredPosts = computed(() => {
-  let result = [...mockPosts.value]
+  let result = [...articles]
 
   // 按分类筛选
   if (selectedCategory.value) {
-    result = result.filter((p) => p.category === selectedCategory.value)
+    result = result.filter((a) => a.category === selectedCategory.value)
   }
 
   // 按关键词搜索
   if (searchKeyword.value) {
     const keyword = searchKeyword.value.trim().toLowerCase()
     result = result.filter(
-      (p) =>
-        p.title.toLowerCase().includes(keyword) ||
-        p.excerpt.toLowerCase().includes(keyword) ||
-        p.tags.some((t) => t.toLowerCase().includes(keyword)),
+      (a) =>
+        a.title.toLowerCase().includes(keyword) ||
+        a.summary.toLowerCase().includes(keyword) ||
+        a.tags.some((t) => t.toLowerCase().includes(keyword))
     )
   }
 
@@ -128,6 +44,13 @@ const pagePosts = computed(() => {
 
 // 总页数
 const total = computed(() => filteredPosts.value.length)
+
+// 所有分类
+const categories = computed(() => {
+  const set = new Set()
+  articles.forEach((a) => set.add(a.category))
+  return Array.from(set)
+})
 
 // 跳转详情
 const goToArticle = (id) => {
@@ -170,10 +93,10 @@ const handleCategoryChange = () => {
           @change="handleCategoryChange"
         >
           <el-option
-            v-for="cat in mockCategories"
-            :key="cat.value"
-            :label="cat.label"
-            :value="cat.value"
+            v-for="cat in categories"
+            :key="cat"
+            :label="cat"
+            :value="cat"
           />
         </el-select>
 
@@ -213,12 +136,12 @@ const handleCategoryChange = () => {
               </span>
               <span class="meta-item">
                 <el-icon><Calendar /></el-icon>
-                {{ post.date }}
+                {{ post.createTime }}
               </span>
             </div>
           </div>
 
-          <div class="post-excerpt">{{ post.excerpt }}</div>
+          <div class="post-excerpt">{{ post.summary }}</div>
 
           <div class="post-bottom">
             <div class="post-tags">
@@ -264,8 +187,8 @@ const handleCategoryChange = () => {
   align-items: center;
 }
 .search-input {
-  flex: 1 1 240px;
-  min-width: 0;
+  flex: 1 1 auto;
+  min-width: 240px;
 }
 .category-select {
   width: 180px;

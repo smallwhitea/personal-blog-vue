@@ -51,60 +51,85 @@ function openDrawer() {
 
 <style scoped lang="scss">
 .layout {
-  min-height: 100svh;
-  background: var(--bg);
+  height: 100vh;                  // 占满视口高度
+  display: flex;
+  flex-direction: column;
+  background-color: var(--bg-base);
 }
 
 .layout-header {
   position: sticky;
   top: 0;
-  z-index: 10;
-  border-bottom: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.65);
-  backdrop-filter: blur(12px);
+  z-index: 100;
+  border-bottom: 1px solid var(--border-lighter);
+  background-color: var(--bg-card);
+  backdrop-filter: blur(16px);
+  padding: 0;
+  height: 64px;
 }
 
 .layout-body {
+  flex: 1;                         // 占满 header/footer 之间的剩余空间
   width: min(1200px, 100%);
   margin: 0 auto;
-  gap: 16px;
-  padding: 16px;
+  padding: var(--spacing-base);
   box-sizing: border-box;
+  display: grid;                   // 两列布局：左侧 sidebar + 右侧 main
+  grid-template-columns: 280px minmax(0, 1fr);
+  column-gap: var(--spacing-base);
+  overflow: hidden;                // 让右侧内部滚动，不让内容溢出
+
 }
 
 .layout-aside {
-  width: 280px;
-  border-right: 1px solid transparent;
+  width: 100%;
 }
-
 .aside-scroll {
   padding-right: 4px;
+  height: 100%;             // 填满左侧这一列
+  overflow-y: auto;         // 侧栏内部如果过长，可以单独滚动
 }
 
 .layout-main {
   padding: 0;
+  min-width: 0;
+  overflow-y: auto;             // 右侧主内容在这里滚动
+
 }
 
 .main-inner {
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--spacing-base);
+  min-height: 100%;             // 使得内容至少占满可视高度，滚动更自然
 }
 
 .layout-footer {
-  border-top: 1px solid var(--border);
-  background: rgba(255, 255, 255, 0.4);
+  border-top: 1px solid var(--border-lighter);
+  background-color: var(--bg-card);
   backdrop-filter: blur(10px);
+  padding: 0;
+  height: 64px;
+}
+
+@media (max-width: 900px) {
+  .layout-body {
+    padding: var(--spacing-sm);
+  }
+
+  .layout-header,
+  .layout-footer {
+    height: 56px;
+  }
 }
 
 @media (max-width: 768px) {
-  .layout-body {
-    padding: 12px;
-  }
-
   .layout-aside {
     display: none;
   }
+
+  .layout-body {
+    gap: var(--spacing-sm);
+  }
 }
 </style>
-
