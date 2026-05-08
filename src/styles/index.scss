@@ -91,24 +91,40 @@
   --bg-card: rgba(16, 18, 34, 0.62);
   --bg-hover: rgba(255, 255, 255, 0.06);
   --bg-elevated: rgba(16, 18, 34, 0.72);
-  --bg-gradient: radial-gradient(1100px circle at 20% 0%, rgba(168, 85, 247, 0.22), transparent 55%),
-    radial-gradient(900px circle at 85% 20%, rgba(76, 201, 255, 0.18), transparent 55%),
-    radial-gradient(700px circle at 60% 95%, rgba(255, 79, 216, 0.12), transparent 55%),
+  --bg-gradient:
+    radial-gradient(
+      1100px circle at 20% 0%,
+      rgba(168, 85, 247, 0.22),
+      transparent 55%
+    ),
+    radial-gradient(
+      900px circle at 85% 20%,
+      rgba(76, 201, 255, 0.18),
+      transparent 55%
+    ),
+    radial-gradient(
+      700px circle at 60% 95%,
+      rgba(255, 79, 216, 0.12),
+      transparent 55%
+    ),
     linear-gradient(180deg, #050712 0%, #060a18 40%, #050712 100%);
   --bg-noise-opacity: 0.06;
 
   // 6. 霓虹描边/光晕
   --neon-border: rgba(76, 201, 255, 0.35);
   --neon-border-2: rgba(255, 79, 216, 0.28);
-  --neon-glow: 0 0 0 1px rgba(76, 201, 255, 0.22), 0 0 24px rgba(168, 85, 247, 0.14);
-  --neon-glow-strong: 0 0 0 1px rgba(76, 201, 255, 0.35), 0 0 28px rgba(76, 201, 255, 0.18),
+  --neon-glow:
+    0 0 0 1px rgba(76, 201, 255, 0.22), 0 0 24px rgba(168, 85, 247, 0.14);
+  --neon-glow-strong:
+    0 0 0 1px rgba(76, 201, 255, 0.35), 0 0 28px rgba(76, 201, 255, 0.18),
     0 0 44px rgba(255, 79, 216, 0.14);
 
   // 7. 阴影（深色系）
   --shadow-base: 0 10px 26px rgba(0, 0, 0, 0.35);
   --shadow-hover: 0 14px 42px rgba(0, 0, 0, 0.42);
   --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.38);
-  --shadow-glass: 0 10px 26px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+  --shadow-glass:
+    0 10px 26px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.06);
 
   // 8. 毛玻璃
   --glass-blur: 16px;
@@ -132,6 +148,7 @@ body {
   background-color: var(--bg-base);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+  cursor: url("/personal-blog-vue/cursor-normal.cur"), auto !important;
 }
 
 #app {
@@ -217,7 +234,7 @@ body {
 
   // 霓虹边框（细、克制）
   &::before {
-    content: '';
+    content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
@@ -228,7 +245,9 @@ body {
       rgba(168, 85, 247, 0.24),
       rgba(255, 79, 216, 0.18)
     );
-    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
     opacity: 0.55;
@@ -284,7 +303,10 @@ body {
   background-color: var(--bg-card);
   box-shadow: none;
   border: 1px solid var(--border-light);
-  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+  transition:
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    background-color 0.2s ease;
 }
 
 // Dark 下的输入框：毛玻璃 + 霓虹聚焦
@@ -344,7 +366,7 @@ pre {
 // Dark 下的代码块：半透明 + 毛玻璃
 .dark code {
   background-color: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.10);
+  border: 1px solid rgba(255, 255, 255, 0.1);
 }
 
 .dark pre {
@@ -372,7 +394,11 @@ pre {
 }
 
 .dark *::-webkit-scrollbar-thumb {
-  background: linear-gradient(180deg, rgba(76, 201, 255, 0.25), rgba(255, 79, 216, 0.18));
+  background: linear-gradient(
+    180deg,
+    rgba(76, 201, 255, 0.25),
+    rgba(255, 79, 216, 0.18)
+  );
   border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
 }
@@ -417,4 +443,27 @@ pre {
   body {
     font-size: 14px;
   }
+}
+
+// ========== 自定义鼠标光标 ==========
+* {
+  cursor: url("/personal-blog-vue/cursor-normal.cur"), auto !important;
+}
+
+// 可点击元素的悬停状态
+a,
+button,
+.el-button,
+.el-link,
+.el-menu-item,
+.post-item,
+.recommend-item,
+.category-item,
+.tag-item,
+[role="button"],
+[role="link"],
+[onclick],
+[class*="cursor-pointer"],
+[class*="clickable"] {
+  cursor: url("/personal-blog-vue/cursor-hover.cur"), pointer !important;
 }

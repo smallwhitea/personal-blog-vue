@@ -10,14 +10,15 @@ let lastMouseY = 0;
 let lastSpawnTime = 0;
 
 const MAX_PARTICLES = 80;
+const PARTICLE_LIFE_TIME = 650;
 
 const colors = [
-  "rgba(0, 245, 255, 0.95)", // 青蓝
-  "rgba(76, 201, 255, 0.9)", // 蓝
-  "rgba(168, 85, 247, 0.9)", // 紫
-  "rgba(255, 79, 216, 0.85)", // 粉
-  "rgba(255, 230, 109, 0.85)", // 黄
-  "rgba(255, 255, 255, 0.95)", // 白
+  "rgba(0, 245, 255, 0.95)",
+  "rgba(76, 201, 255, 0.9)",
+  "rgba(168, 85, 247, 0.9)",
+  "rgba(255, 79, 216, 0.85)",
+  "rgba(255, 230, 109, 0.85)",
+  "rgba(255, 255, 255, 0.95)",
 ];
 
 const shapes = ["circle", "diamond", "star", "line", "square"];
@@ -28,6 +29,10 @@ const checkMobile = () => {
 
 const random = (min, max) => Math.random() * (max - min) + min;
 
+const clearParticles = () => {
+  particles.value = [];
+};
+
 const spawnParticle = (x, y, big = false) => {
   if (particles.value.length >= MAX_PARTICLES) {
     particles.value.shift();
@@ -37,6 +42,7 @@ const spawnParticle = (x, y, big = false) => {
 
   particles.value.push({
     id: Date.now() + Math.random(),
+    createdAt: performance.now(),
 
     x,
     y,
@@ -64,18 +70,16 @@ const handleMouseMove = (e) => {
   if (isMobile.value) return;
 
   const now = Date.now();
-
   const x = e.clientX;
   const y = e.clientY;
 
-  // 提高生成频率
   if (now - lastSpawnTime > 30) {
     const distance = Math.sqrt(
       Math.pow(x - lastMouseX, 2) + Math.pow(y - lastMouseY, 2),
     );
 
-    // 鼠标移动越快，补点越多
-    const steps = Math.max(1, Math.floor(distance / 22));
+    // 限制快速甩鼠标时一次性生成太多粒子
+    const steps = Math.min(4, Math.max(1, Math.floor(distance / 28)));
 
     for (let i = 1; i <= steps; i++) {
       const t = i / steps;
@@ -85,7 +89,6 @@ const handleMouseMove = (e) => {
 
       spawnParticle(px, py);
 
-      // 小概率生成大星芒
       if (Math.random() < 0.08) {
         spawnParticle(px, py, true);
       }
@@ -99,22 +102,24 @@ const handleMouseMove = (e) => {
 };
 
 const animate = () => {
+  const now = performance.now();
+
   particles.value = particles.value
-    .map((p) => ({
-      ...p,
+    .map((p) => {
+      const age = now - p.createdAt;
+      const life = Math.max(0, 1 - age / PARTICLE_LIFE_TIME);
 
-      x: p.x + p.vx,
-      y: p.y + p.vy,
-
-      rotate: p.rotate + p.rotateSpeed,
-
-      life: p.life - 0.018,
-
-      opacity: p.life,
-
-      scale: p.scale + 0.003,
-    }))
-    .filter((p) => p.life > 0);
+      return {
+        ...p,
+        x: p.x + p.vx,
+        y: p.y + p.vy,
+        rotate: p.rotate + p.rotateSpeed,
+        life,
+        opacity: life,
+        scale: p.scale + 0.002,
+      };
+    })
+    .filter((p) => p.life > 0.02);
 
   animationFrameId = requestAnimationFrame(animate);
 };
@@ -123,16 +128,20 @@ onMounted(() => {
   checkMobile();
 
   window.addEventListener("resize", checkMobile);
-
   window.addEventListener("mousemove", handleMouseMove, { passive: true });
+
+  // 页面失焦 / 鼠标离开窗口时强制清理，避免残留
+  window.addEventListener("mouseleave", clearParticles);
+  window.addEventListener("blur", clearParticles);
 
   animate();
 });
 
 onUnmounted(() => {
   window.removeEventListener("resize", checkMobile);
-
   window.removeEventListener("mousemove", handleMouseMove);
+  window.removeEventListener("mouseleave", clearParticles);
+  window.removeEventListener("blur", clearParticles);
 
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
@@ -149,18 +158,12 @@ onUnmounted(() => {
       :style="{
         left: particle.x + 'px',
         top: particle.y + 'px',
-
         width: particle.size + 'px',
         height: particle.size + 'px',
-
         opacity: particle.opacity,
-
         background: particle.shape === 'star' ? 'transparent' : particle.color,
-
         color: particle.color,
-
-        boxShadow: `0 0 ${particle.size * 2}px ${particle.color}`,
-
+        boxShadow: `0 0 ${particle.size}px ${particle.color}`,
         transform: `
           translate(-50%, -50%)
           rotate(${particle.rotate}deg)
@@ -175,50 +178,38 @@ onUnmounted(() => {
 .cursor-trail {
   position: fixed;
   inset: 0;
-
   pointer-events: none;
-
   z-index: 99999;
-
   overflow: hidden;
 }
 
 .particle {
   position: absolute;
-
   pointer-events: none;
-
   mix-blend-mode: screen;
-
   transition:
     opacity 0.12s linear,
     transform 0.12s linear;
 }
 
-/* 圆形 */
 .particle-circle {
   border-radius: 50%;
 }
 
-/* 方块 */
 .particle-square {
   border-radius: 2px;
 }
 
-/* 菱形 */
 .particle-diamond {
   border-radius: 2px;
 }
 
-/* 光线 */
 .particle-line {
   width: 10px !important;
   height: 2px !important;
-
   border-radius: 999px;
 }
 
-/* 星芒 */
 .particle-star {
   background: transparent !important;
 }
@@ -226,20 +217,14 @@ onUnmounted(() => {
 .particle-star::before,
 .particle-star::after {
   content: "";
-
   position: absolute;
-
   left: 50%;
   top: 50%;
-
   width: 100%;
   height: 2px;
-
   background: currentColor;
-
   transform: translate(-50%, -50%);
-
-  box-shadow: 0 0 12px currentColor;
+  box-shadow: 0 0 6px currentColor;
 }
 
 .particle-star::after {
