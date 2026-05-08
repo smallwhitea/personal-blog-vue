@@ -1,99 +1,117 @@
-// ========== 全局变量 ==========
+// ==================== 全局变量 ====================
 :root {
-  // 主题色
+  // Light 主题（简约清爽）
+  // 1. 基础色（状态）
   --primary-color: #409eff;
   --primary-light: #ecf5ff;
   --primary-dark: #337ecc;
 
-  // 成功色
   --success-color: #67c23a;
   --success-light: #f0f9eb;
-
-  // 警告色
   --warning-color: #e6a23c;
   --warning-light: #fdf6ec;
-
-  // 危险色
   --danger-color: #f56c6c;
   --danger-light: #fef0f0;
-
-  // 信息色
   --info-color: #909399;
   --info-light: #f4f4f5;
 
-  // 文本颜色
+  // 2. 文本色
   --text-primary: #303133;
   --text-regular: #606266;
   --text-secondary: #909399;
   --text-placeholder: #c0c4cc;
 
-  // 边框颜色
+  // 3. 边框色
   --border-base: #dcdfe6;
   --border-light: #e4e7ed;
   --border-lighter: #ebeef5;
   --border-extra-light: #f2f6fc;
 
-  // 背景色
+  // 4. 背景色
   --bg-base: #f5f7fa;
   --bg-page: #ffffff;
   --bg-card: #ffffff;
   --bg-hover: #f5f7fa;
+  --bg-elevated: #ffffff;
 
-  // 阴影
+  // 5. 阴影
   --shadow-base: 0 1px 3px rgba(0, 0, 0, 0.08);
   --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.12);
   --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.06);
+  --shadow-glass: none;
 
-  // 字体
+  // 6. 字体 / 圆角 / 间距 / 过渡（Light/Dark 共享）
   --font-family: system-ui, -apple-system, sans-serif;
   --font-code: "SF Mono", "Roboto Mono", Consolas, monospace;
-
-  // 圆角
   --border-radius-sm: 4px;
   --border-radius-base: 8px;
   --border-radius-lg: 12px;
-
-  // 间距
   --spacing-xs: 4px;
   --spacing-sm: 8px;
   --spacing-base: 16px;
   --spacing-md: 24px;
   --spacing-lg: 32px;
   --spacing-xl: 48px;
-
-  // 过渡
   --transition-base: 0.3s ease;
+  --glass-blur: 0px;
+
+  // 霓虹占位（仅 Dark 生效）
+  --bg-noise-opacity: 0;
 }
 
-// ========== 暗黑模式变量 ==========
+// ==================== Dark 主题（赛博朋克霓虹）====================
 .dark {
-  // 主题色
-  --primary-color: #409eff;
-  --primary-light: rgba(64, 158, 255, 0.1);
-  --primary-dark: #79bbff;
+  // 1. 霓虹色板
+  --neon-blue: #4cc9ff;
+  --neon-purple: #a855f7;
+  --neon-pink: #ff4fd8;
+  --neon-cyan: #22f7d2;
+  --neon-yellow: #ffe66d;
 
-  // 文本颜色
-  --text-primary: #e5eaf3;
-  --text-regular: #cfd3dc;
-  --text-secondary: #a3a6ad;
-  --text-placeholder: #8d9095;
+  // 2. 主色调（霓虹蓝）
+  --primary-color: #4cc9ff;
+  --primary-light: rgba(76, 201, 255, 0.14);
+  --primary-dark: #2aa6ff;
 
-  // 边框颜色
-  --border-base: #4c4d4f;
-  --border-light: #414243;
-  --border-lighter: #363637;
-  --border-extra-light: #2b2b2c;
+  // 3. 文本色（高对比）
+  --text-primary: rgba(245, 247, 255, 0.92);
+  --text-regular: rgba(229, 234, 243, 0.82);
+  --text-secondary: rgba(203, 210, 224, 0.68);
+  --text-placeholder: rgba(203, 210, 224, 0.48);
 
-  // 背景色
-  --bg-base: #0a0a0a;
-  --bg-page: #1d1e1f;
-  --bg-card: #1d1e1f;
-  --bg-hover: #262727;
+  // 4. 边框色（半透明白）
+  --border-base: rgba(255, 255, 255, 0.16);
+  --border-light: rgba(255, 255, 255, 0.12);
+  --border-lighter: rgba(255, 255, 255, 0.08);
+  --border-extra-light: rgba(255, 255, 255, 0.06);
 
-  // 阴影
-  --shadow-base: 0 1px 3px rgba(0, 0, 0, 0.3);
-  --shadow-hover: 0 4px 12px rgba(0, 0, 0, 0.4);
-  --shadow-card: 0 2px 8px rgba(0, 0, 0, 0.25);
+  // 5. 背景色（深黑渐变底 + 装饰层
+  --bg-base: #050712;
+  --bg-page: rgba(10, 12, 24, 0.72);
+  --bg-card: rgba(16, 18, 34, 0.62);
+  --bg-hover: rgba(255, 255, 255, 0.06);
+  --bg-elevated: rgba(16, 18, 34, 0.72);
+  --bg-gradient: radial-gradient(1100px circle at 20% 0%, rgba(168, 85, 247, 0.22), transparent 55%),
+    radial-gradient(900px circle at 85% 20%, rgba(76, 201, 255, 0.18), transparent 55%),
+    radial-gradient(700px circle at 60% 95%, rgba(255, 79, 216, 0.12), transparent 55%),
+    linear-gradient(180deg, #050712 0%, #060a18 40%, #050712 100%);
+  --bg-noise-opacity: 0.06;
+
+  // 6. 霓虹描边/光晕
+  --neon-border: rgba(76, 201, 255, 0.35);
+  --neon-border-2: rgba(255, 79, 216, 0.28);
+  --neon-glow: 0 0 0 1px rgba(76, 201, 255, 0.22), 0 0 24px rgba(168, 85, 247, 0.14);
+  --neon-glow-strong: 0 0 0 1px rgba(76, 201, 255, 0.35), 0 0 28px rgba(76, 201, 255, 0.18),
+    0 0 44px rgba(255, 79, 216, 0.14);
+
+  // 7. 阴影（深色系）
+  --shadow-base: 0 10px 26px rgba(0, 0, 0, 0.35);
+  --shadow-hover: 0 14px 42px rgba(0, 0, 0, 0.42);
+  --shadow-card: 0 12px 32px rgba(0, 0, 0, 0.38);
+  --shadow-glass: 0 10px 26px rgba(0, 0, 0, 0.32), inset 0 1px 0 rgba(255, 255, 255, 0.06);
+
+  // 8. 毛玻璃
+  --glass-blur: 16px;
 }
 
 // ========== 全局重置 ==========
@@ -119,6 +137,12 @@ body {
 #app {
   width: 100%;
   min-height: 100vh;
+  position: relative;
+}
+
+// 保留基础深色背景，装饰层交给 CyberBackground 组件
+.dark #app {
+  background: var(--bg-gradient);
 }
 
 // ========== 通用工具类 ==========
@@ -173,6 +197,8 @@ body {
   box-shadow: var(--shadow-card);
   border: 1px solid var(--border-lighter);
   background-color: var(--bg-card);
+  position: relative;
+  z-index: 1;
 
   .el-card__header {
     border-bottom: 1px solid var(--border-extra-light);
@@ -184,6 +210,32 @@ body {
   }
 }
 
+// Dark 下的卡片：毛玻璃 + 霓虹边框
+.dark .el-card {
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+
+  // 霓虹边框（细、克制）
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1px;
+    background: linear-gradient(
+      135deg,
+      rgba(76, 201, 255, 0.42),
+      rgba(168, 85, 247, 0.24),
+      rgba(255, 79, 216, 0.18)
+    );
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.55;
+    pointer-events: none;
+  }
+}
+
 .el-button {
   border-radius: var(--border-radius-base);
 
@@ -192,6 +244,16 @@ body {
     &:hover {
       background-color: var(--primary-dark);
     }
+  }
+}
+
+// Dark 下的按钮：霓虹光晕
+.dark .el-button--primary {
+  border-color: rgba(76, 201, 255, 0.35);
+  box-shadow: 0 8px 18px rgba(76, 201, 255, 0.18);
+
+  &:hover {
+    box-shadow: 0 10px 24px rgba(76, 201, 255, 0.22);
   }
 }
 
@@ -222,11 +284,40 @@ body {
   background-color: var(--bg-card);
   box-shadow: none;
   border: 1px solid var(--border-light);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+// Dark 下的输入框：毛玻璃 + 霓虹聚焦
+.dark .el-input__wrapper {
+  background-color: rgba(16, 18, 34, 0.55);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+}
+
+.dark .el-input__wrapper.is-focus {
+  border-color: rgba(76, 201, 255, 0.38);
+  box-shadow: var(--neon-glow);
 }
 
 .el-menu {
   border-bottom: none;
   background-color: transparent;
+}
+
+// Dark 下的菜单：轻霓虹高亮
+.dark .el-menu-item.is-active {
+  color: var(--text-primary);
+  text-shadow: 0 0 18px rgba(76, 201, 255, 0.22);
+}
+
+// Divider / Empty 等细节
+.el-divider--horizontal {
+  border-top-color: var(--border-extra-light);
+}
+
+.el-empty__description {
+  color: var(--text-secondary);
 }
 
 // ========== 代码块样式 ==========
@@ -250,6 +341,46 @@ pre {
   line-height: 1.7;
 }
 
+// Dark 下的代码块：半透明 + 毛玻璃
+.dark code {
+  background-color: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.10);
+}
+
+.dark pre {
+  background-color: rgba(0, 0, 0, 0.18);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  backdrop-filter: blur(calc(var(--glass-blur) - 6px));
+  -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 6px));
+}
+
+// 选中文本
+::selection {
+  background: rgba(64, 158, 255, 0.28);
+  color: var(--text-primary);
+}
+
+// Dark 下的选中与滚动条：霓虹质感
+.dark ::selection {
+  background: rgba(168, 85, 247, 0.28);
+  color: var(--text-primary);
+}
+
+.dark *::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.dark *::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, rgba(76, 201, 255, 0.25), rgba(255, 79, 216, 0.18));
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 999px;
+}
+
+.dark *::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.04);
+}
+
 // ========== 响应式断点 ==========
 @media (max-width: 1200px) {
   :root {
@@ -268,6 +399,11 @@ pre {
   html,
   body {
     font-size: 15px;
+  }
+
+  :root {
+    --glass-blur: 12px;
+    --bg-noise-opacity: 0.04;
   }
 }
 

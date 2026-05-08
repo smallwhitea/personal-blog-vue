@@ -1,10 +1,15 @@
 <script setup>
 import { computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { articles } from '@/mock/articles'
+import { articles, types } from '@/mock/articles'
 
 const route = useRoute()
 const router = useRouter()
+
+// 获取类型信息
+const getTypeInfo = (typeValue) => {
+  return types.find(t => t.value === typeValue) || types[0]
+}
 
 // 当前文章
 const articleId = computed(() => route.params.id)
@@ -54,9 +59,21 @@ const goBackToList = () => {
             返回列表
           </el-button>
 
-          <h1 class="article-title">{{ article.title }}</h1>
+          <h1 class="article-title">
+            <span v-if="article.pinned" class="pinned-badge">📌</span>
+            {{ article.title }}
+          </h1>
 
           <div class="article-meta">
+            <span class="mood-emoji">{{ article.mood || '😊' }}</span>
+            <el-tag 
+              size="small" 
+              effect="light" 
+              :color="getTypeInfo(article.type).color"
+              style="background-color: rgba(76, 201, 255, 0.1); border: none;"
+            >
+              {{ getTypeInfo(article.type).label }}
+            </el-tag>
             <span class="meta-item">
               <el-icon><User /></el-icon>
               {{ article.author }}
@@ -180,6 +197,17 @@ const goBackToList = () => {
   font-size: 28px;
   font-weight: 700;
   color: var(--text-h);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pinned-badge {
+  font-size: 24px;
+}
+
+.mood-emoji {
+  font-size: 24px;
 }
 
 .article-meta {

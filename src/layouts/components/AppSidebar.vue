@@ -57,7 +57,7 @@ const active = computed(() => route.path);
         </el-menu-item>
         <el-menu-item index="/posts">
           <el-icon><Document /></el-icon>
-          <span>文章</span>
+          <span>记录</span>
         </el-menu-item>
         <el-menu-item index="/category">
           <el-icon><FolderOpened /></el-icon>
@@ -105,14 +105,14 @@ const active = computed(() => route.path);
 
 .name {
   font-weight: 650;
-  color: var(--text-h);
+  color: var(--text-primary);
   line-height: 1.1;
 }
 
 .desc {
   margin-top: 6px;
   font-size: 13px;
-  color: var(--text);
+  color: var(--text-secondary);
   opacity: 0.9;
 }
 
@@ -124,6 +124,7 @@ const active = computed(() => route.path);
 }
 
 .links {
+  font-size: 12px;
   display: flex;
   flex-direction: column;
   gap: 10px;
@@ -132,5 +133,40 @@ const active = computed(() => route.path);
 
 .menu-inner {
   border-right: none;
+}
+
+.menu-inner :deep(.el-menu-item) {
+  border-radius: 10px;
+  margin: 4px 6px;
+}
+
+// Dark 下的侧边栏样式
+.dark .avatar {
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow:
+    0 0 0 1px rgba(76, 201, 255, 0.18),
+    0 12px 26px rgba(0, 0, 0, 0.35);
+}
+
+.dark .menu-inner :deep(.el-menu-item) {
+  color: rgba(229, 234, 243, 0.8);
+}
+
+.dark .menu-inner :deep(.el-menu-item:hover) {
+  background: rgba(255, 255, 255, 0.05);
+  color: rgba(245, 247, 255, 0.92);
+  text-shadow: 0 0 18px rgba(168, 85, 247, 0.18);
+}
+
+.dark .menu-inner :deep(.el-menu-item.is-active) {
+  background: linear-gradient(
+    135deg,
+    rgba(76, 201, 255, 0.16),
+    rgba(255, 79, 216, 0.1)
+  );
+  box-shadow:
+    0 0 0 1px rgba(76, 201, 255, 0.18),
+    0 0 26px rgba(76, 201, 255, 0.1);
+  color: rgba(245, 247, 255, 0.94);
 }
 </style>

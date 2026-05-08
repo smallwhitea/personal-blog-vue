@@ -44,6 +44,28 @@ const year = new Date().getFullYear()
   opacity: 0.6;
 }
 
+.right :deep(.el-link) {
+  color: var(--text-secondary);
+}
+
+.right :deep(.el-link:hover) {
+  color: var(--primary-color);
+}
+
+// Dark 下的 Footer 样式
+.dark .footer {
+  color: rgba(203, 210, 224, 0.62);
+}
+
+.dark .right :deep(.el-link) {
+  color: rgba(229, 234, 243, 0.78);
+}
+
+.dark .right :deep(.el-link:hover) {
+  color: var(--primary-color);
+  text-shadow: 0 0 16px rgba(76, 201, 255, 0.18);
+}
+
 @media (max-width: 768px) {
   .footer {
     font-size: 13px;

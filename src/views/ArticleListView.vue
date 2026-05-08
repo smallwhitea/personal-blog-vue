@@ -1,13 +1,19 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { articles } from '@/mock/articles'
+import { articles, types } from '@/mock/articles'
 
 const router = useRouter()
+
+// 获取类型信息
+const getTypeInfo = (typeValue) => {
+  return types.find(t => t.value === typeValue) || types[0]
+}
 
 // 筛选条件
 const searchKeyword = ref('')
 const selectedCategory = ref('')
+const selectedType = ref('')
 
 // 分页
 const currentPage = ref(1)
@@ -22,6 +28,11 @@ const filteredPosts = computed(() => {
     result = result.filter((a) => a.category === selectedCategory.value)
   }
 
+  // 按类型筛选
+  if (selectedType.value) {
+    result = result.filter((a) => a.type === selectedType.value)
+  }
+
   // 按关键词搜索
   if (searchKeyword.value) {
     const keyword = searchKeyword.value.trim().toLowerCase()
@@ -32,6 +43,13 @@ const filteredPosts = computed(() => {
         a.tags.some((t) => t.toLowerCase().includes(keyword))
     )
   }
+
+  // 置顶优先，然后按时间排序
+  result.sort((a, b) => {
+    if (a.pinned && !b.pinned) return -1
+    if (!a.pinned && b.pinned) return 1
+    return new Date(b.createTime) - new Date(a.createTime)
+  })
 
   return result
 })
@@ -65,6 +83,10 @@ const handleSearch = () => {
 const handleCategoryChange = () => {
   currentPage.value = 1
 }
+
+const handleTypeChange = () => {
+  currentPage.value = 1
+}
 </script>
 
 <template>
@@ -75,7 +97,7 @@ const handleCategoryChange = () => {
         <el-input
           v-model="searchKeyword"
           class="search-input"
-          placeholder="搜索文章标题/摘要/标签..."
+          placeholder="搜索记录标题/摘要/标签..."
           clearable
           @clear="handleSearch"
           @keyup.enter="handleSearch"
@@ -84,6 +106,21 @@ const handleCategoryChange = () => {
             <el-icon><Search /></el-icon>
           </template>
         </el-input>
+
+        <el-select
+          v-model="selectedType"
+          class="type-select"
+          placeholder="选择类型"
+          clearable
+          @change="handleTypeChange"
+        >
+          <el-option
+            v-for="t in types"
+            :key="t.value"
+            :label="t.label"
+            :value="t.value"
+          />
+        </el-select>
 
         <el-select
           v-model="selectedCategory"
@@ -110,9 +147,9 @@ const handleCategoryChange = () => {
         <div class="list-header">
           <div class="header-title">
             <el-icon><Document /></el-icon>
-            文章列表
+            记录列表
           </div>
-          <div class="header-count">共 {{ total }} 篇文章</div>
+          <div class="header-count">共 {{ total }} 条记录</div>
         </div>
       </template>
 
@@ -125,8 +162,20 @@ const handleCategoryChange = () => {
           @click="goToArticle(post.id)"
         >
           <div class="post-top">
-            <div class="post-title">{{ post.title }}</div>
+            <div class="post-title">
+              <span v-if="post.pinned" class="pinned-badge">📌</span>
+              {{ post.title }}
+            </div>
             <div class="post-meta">
+              <span class="mood-emoji">{{ post.mood || '😊' }}</span>
+              <el-tag 
+                size="small" 
+                effect="light" 
+                :color="getTypeInfo(post.type).color"
+                style="background-color: rgba(76, 201, 255, 0.1); border: none;"
+              >
+                {{ getTypeInfo(post.type).label }}
+              </el-tag>
               <el-tag size="small" type="info" effect="light" class="meta-tag">
                 {{ post.category }}
               </el-tag>
@@ -154,7 +203,7 @@ const handleCategoryChange = () => {
         </el-card>
       </div>
 
-      <el-empty v-else description="暂无符合条件的文章" />
+      <el-empty v-else description="暂无符合条件的记录" />
 
       <!-- 分页 -->
       <div v-if="total > 0" class="pagination-wrap">
@@ -190,8 +239,9 @@ const handleCategoryChange = () => {
   flex: 1 1 auto;
   min-width: 240px;
 }
+.type-select,
 .category-select {
-  width: 180px;
+  width: 150px;
 }
 
 .list-card {
@@ -242,6 +292,15 @@ const handleCategoryChange = () => {
   color: var(--text-h);
   flex: 1 1 auto;
   min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.pinned-badge {
+  font-size: 16px;
+}
+.mood-emoji {
+  font-size: 20px;
 }
 .post-meta {
   display: flex;

@@ -74,7 +74,7 @@ const goToArticle = (id) => {
       <template #header>
         <div class="card-header">
           <div class="h">
-            「{{ selectedTag }}」标签下的文章
+            「{{ selectedTag }}」标签下的记录
           </div>
         </div>
       </template>
@@ -110,8 +110,8 @@ const goToArticle = (id) => {
       </div>
     </el-card>
 
-    <el-empty v-else-if="selectedTag" description="该标签下暂无文章" />
-    <el-empty v-else description="点击上方标签查看文章" />
+    <el-empty v-else-if="selectedTag" description="该标签下暂无记录" />
+    <el-empty v-else description="点击上方标签查看记录" />
   </div>
 </template>
 

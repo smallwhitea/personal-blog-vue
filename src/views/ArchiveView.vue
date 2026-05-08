@@ -43,7 +43,7 @@ const goToArticle = (id) => {
             归档
           </div>
           <div class="count">
-            共 {{ articles.length }} 篇文章
+            共 {{ articles.length }} 条记录
           </div>
         </div>
       </template>

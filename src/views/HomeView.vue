@@ -1,14 +1,24 @@
 <script setup>
 import { ref, computed } from "vue";
 import { useRouter } from "vue-router";
-import { articles } from "@/mock/articles";
+import { articles, types } from "@/mock/articles";
 import { siteConfig } from "@/config/site";
 
 const router = useRouter();
 
-// 最新文章（前4篇）
+// 获取类型信息
+const getTypeInfo = (typeValue) => {
+  return types.find(t => t.value === typeValue) || types[0]
+}
+
+// 最新文章（前4篇，置顶优先）
 const recentPosts = computed(() => {
-  return articles.slice(0, 4).map((a) => ({
+  const sorted = [...articles].sort((a, b) => {
+    if (a.pinned && !b.pinned) return -1
+    if (!a.pinned && b.pinned) return 1
+    return new Date(b.createTime) - new Date(a.createTime)
+  })
+  return sorted.slice(0, 4).map((a) => ({
     ...a,
     excerpt: a.summary,
     date: a.createTime,
@@ -64,7 +74,7 @@ const goToPosts = () => {
             {{ siteConfig.hero.subtitle }}
           </div>
           <div class="banner-actions">
-            <el-button type="primary" @click="goToPosts"> 浏览文章 </el-button>
+            <el-button type="primary" @click="goToPosts"> 浏览记录 </el-button>
             <el-button @click="router.push({ name: 'about' })"
               >关于我</el-button
             >
@@ -85,13 +95,13 @@ const goToPosts = () => {
     <div class="content-row">
       <!-- 主要内容 -->
       <div class="content-left">
-        <!-- 2. 最新文章列表 -->
+        <!-- 2. 最新记录 -->
         <el-card class="section-card">
           <template #header>
             <div class="section-header">
               <div class="section-title">
                 <el-icon><Document /></el-icon>
-                最新文章
+                最新记录
               </div>
               <el-link type="primary" :underline="false" @click="goToPosts">
                 查看全部
@@ -107,10 +117,24 @@ const goToPosts = () => {
               @click="goToArticle(post.id)"
             >
               <div class="post-top">
-                <div class="post-title">{{ post.title }}</div>
-                <el-tag size="small" type="info" effect="light">{{
-                  post.date
-                }}</el-tag>
+                <div class="post-title">
+                  <span v-if="post.pinned" class="pinned-badge">📌</span>
+                  {{ post.title }}
+                </div>
+                <div class="post-meta">
+                  <span class="mood-emoji">{{ post.mood || '😊' }}</span>
+                  <el-tag 
+                    size="small" 
+                    effect="light" 
+                    :color="getTypeInfo(post.type).color"
+                    style="background-color: rgba(76, 201, 255, 0.1); border: none;"
+                  >
+                    {{ getTypeInfo(post.type).label }}
+                  </el-tag>
+                  <el-tag size="small" type="info" effect="light">{{
+                    post.date
+                  }}</el-tag>
+                </div>
               </div>
               <div class="post-excerpt">{{ post.excerpt }}</div>
               <div class="post-tags">
@@ -159,13 +183,13 @@ const goToPosts = () => {
           </div>
         </el-card>
 
-        <!-- 4. 推荐文章 -->
+        <!-- 4. 推荐记录 -->
         <el-card class="section-card">
           <template #header>
             <div class="section-header">
               <div class="section-title">
                 <el-icon><Star /></el-icon>
-                推荐文章
+                推荐记录
               </div>
             </div>
           </template>
@@ -235,6 +259,38 @@ const goToPosts = () => {
   }
 }
 
+// Dark 下的 Banner：霓虹光晕
+.dark .banner-card {
+  position: relative;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: -1px;
+    pointer-events: none;
+    border-radius: inherit;
+    background:
+      radial-gradient(620px circle at 18% 12%, rgba(76, 201, 255, 0.16), transparent 60%),
+      radial-gradient(520px circle at 82% 36%, rgba(255, 79, 216, 0.10), transparent 62%),
+      radial-gradient(420px circle at 55% 92%, rgba(168, 85, 247, 0.10), transparent 64%);
+    opacity: 0.95;
+  }
+
+  .banner-inner {
+    position: relative;
+    z-index: 1;
+  }
+
+  .banner-title {
+    text-shadow: 0 0 24px rgba(76, 201, 255, 0.16);
+  }
+
+  .banner-avatar {
+    border: 1px solid rgba(255, 255, 255, 0.16);
+  }
+}
+
 /* 内容行布局 */
 .content-row {
   display: grid;
@@ -296,6 +352,7 @@ const goToPosts = () => {
   align-items: flex-start;
   gap: var(--spacing-sm);
   margin-bottom: var(--spacing-sm);
+  flex-wrap: wrap;
 }
 
 .post-title {
@@ -307,6 +364,24 @@ const goToPosts = () => {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pinned-badge {
+  font-size: 16px;
+}
+
+.post-meta {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.mood-emoji {
+  font-size: 20px;
 }
 
 .post-excerpt {

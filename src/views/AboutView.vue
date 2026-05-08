@@ -51,7 +51,7 @@ const workExperiences = ref([
   {
     company: "幼年时期",
     position: "记忆缺失玩家",
-    period: "2000 - 2008",
+    period: "2002 - 2008",
     desc: "由于年代久远，服务器暂未同步相关数据。",
   },
 ]);

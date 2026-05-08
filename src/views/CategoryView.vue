@@ -63,7 +63,7 @@ const goToArticle = (id) => {
         >
           <div class="cat-name">{{ cat.name }}</div>
           <el-tag size="small" effect="light" type="info">
-            {{ cat.count }} 篇文章
+            {{ cat.count }} 条记录
           </el-tag>
         </div>
       </div>
@@ -74,7 +74,7 @@ const goToArticle = (id) => {
       <template #header>
         <div class="card-header">
           <div class="h">
-            「{{ selectedCategory }}」分类下的文章
+            「{{ selectedCategory }}」分类下的记录
           </div>
         </div>
       </template>
@@ -110,8 +110,8 @@ const goToArticle = (id) => {
       </div>
     </el-card>
 
-    <el-empty v-else-if="selectedCategory" description="该分类下暂无文章" />
-    <el-empty v-else description="点击上方分类查看文章" />
+    <el-empty v-else-if="selectedCategory" description="该分类下暂无记录" />
+    <el-empty v-else description="点击上方分类查看记录" />
   </div>
 </template>
 
