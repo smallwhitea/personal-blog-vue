@@ -1,7 +1,7 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { articles, types } from '@/mock/articles'
+import { posts, types } from '@/content/posts'
 
 const router = useRouter()
 
@@ -12,7 +12,6 @@ const getTypeInfo = (typeValue) => {
 
 // 筛选条件
 const searchKeyword = ref('')
-const selectedCategory = ref('')
 const selectedType = ref('')
 
 // 分页
@@ -21,12 +20,7 @@ const pageSize = ref(4)
 
 // 过滤后的文章
 const filteredPosts = computed(() => {
-  let result = [...articles]
-
-  // 按分类筛选
-  if (selectedCategory.value) {
-    result = result.filter((a) => a.category === selectedCategory.value)
-  }
+  let result = [...posts]
 
   // 按类型筛选
   if (selectedType.value) {
@@ -63,12 +57,11 @@ const pagePosts = computed(() => {
 // 总页数
 const total = computed(() => filteredPosts.value.length)
 
-// 所有分类
-const categories = computed(() => {
-  const set = new Set()
-  articles.forEach((a) => set.add(a.category))
-  return Array.from(set)
-})
+// 根据类型获取分类标签
+const getCategoryLabel = (type) => {
+  const typeInfo = types.find(t => t.value === type)
+  return typeInfo ? typeInfo.label : '其他'
+}
 
 // 跳转详情
 const goToArticle = (id) => {
@@ -122,21 +115,6 @@ const handleTypeChange = () => {
           />
         </el-select>
 
-        <el-select
-          v-model="selectedCategory"
-          class="category-select"
-          placeholder="选择分类"
-          clearable
-          @change="handleCategoryChange"
-        >
-          <el-option
-            v-for="cat in categories"
-            :key="cat"
-            :label="cat"
-            :value="cat"
-          />
-        </el-select>
-
         <el-button type="primary" @click="handleSearch">搜索</el-button>
       </div>
     </el-card>
@@ -175,9 +153,6 @@ const handleTypeChange = () => {
                 style="background-color: rgba(76, 201, 255, 0.1); border: none;"
               >
                 {{ getTypeInfo(post.type).label }}
-              </el-tag>
-              <el-tag size="small" type="info" effect="light" class="meta-tag">
-                {{ post.category }}
               </el-tag>
               <span class="meta-item">
                 <el-icon><View /></el-icon>

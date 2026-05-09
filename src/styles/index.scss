@@ -216,6 +216,7 @@ body {
   background-color: var(--bg-card);
   position: relative;
   z-index: 1;
+  overflow: hidden;
 
   .el-card__header {
     border-bottom: 1px solid var(--border-extra-light);
@@ -227,31 +228,106 @@ body {
   }
 }
 
-// Dark 下的卡片：毛玻璃 + 霓虹边框
+// ==================== 流光边框 keyframes ====================
+@keyframes neon-flow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes neon-flow-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Dark 下的卡片：毛玻璃 + 霓虹流光边框（conic + mask）
 .dark .el-card {
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
+  position: relative;
+  z-index: 1;
 
-  // 霓虹边框（细、克制）
   &::before {
     content: "";
     position: absolute;
     inset: 0;
     border-radius: inherit;
     padding: 1px;
-    background: linear-gradient(
-      135deg,
-      rgba(76, 201, 255, 0.42),
-      rgba(168, 85, 247, 0.24),
-      rgba(255, 79, 216, 0.18)
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      rgba(76, 201, 255, 0.35) 45deg,
+      rgba(168, 85, 247, 0.25) 100deg,
+      rgba(255, 79, 216, 0.18) 150deg,
+      transparent 200deg,
+      transparent 240deg,
+      rgba(34, 247, 210, 0.2) 290deg,
+      rgba(76, 201, 255, 0.3) 340deg,
+      transparent 360deg
     );
     -webkit-mask:
       linear-gradient(#000 0 0) content-box,
       linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
-    opacity: 0.55;
+    opacity: 0.7;
+    animation: neon-flow-slow 18s linear infinite;
     pointer-events: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 2px;
+    background: conic-gradient(
+      from 0deg,
+      transparent 0deg,
+      rgba(76, 201, 255, 0.12) 50deg,
+      rgba(168, 85, 247, 0.08) 110deg,
+      rgba(255, 79, 216, 0.06) 170deg,
+      transparent 220deg,
+      transparent 260deg,
+      rgba(34, 247, 210, 0.09) 310deg,
+      rgba(76, 201, 255, 0.1) 350deg,
+      transparent 360deg
+    );
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0.4;
+    animation: neon-flow 12s linear infinite reverse;
+    filter: blur(2.5px);
+    pointer-events: none;
+  }
+
+  &:hover {
+    &::before {
+      animation-duration: 8s;
+      opacity: 1;
+    }
+    &::after {
+      animation-duration: 6s;
+      filter: blur(3.5px);
+      opacity: 0.6;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dark .el-card::before,
+  .dark .el-card::after {
+    animation: none !important;
   }
 }
 

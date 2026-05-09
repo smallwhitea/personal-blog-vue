@@ -1,14 +1,20 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { articles } from '@/mock/articles'
+import { posts, types } from '@/content/posts'
 
 const router = useRouter()
+
+// 获取分类标签
+const getCategoryLabel = (type) => {
+  const typeInfo = types.find(t => t.value === type)
+  return typeInfo ? typeInfo.label : '其他'
+}
 
 // 按年份和月份分组
 const groupedPosts = computed(() => {
   const map = {}
-  articles.forEach((a) => {
+  posts.forEach((a) => {
     const [year, month] = a.createTime.split('-')
     const key = `${year}-${month}`
     if (!map[key]) {
@@ -43,7 +49,7 @@ const goToArticle = (id) => {
             归档
           </div>
           <div class="count">
-            共 {{ articles.length }} 条记录
+            共 {{ posts.length }} 条记录
           </div>
         </div>
       </template>
@@ -69,7 +75,7 @@ const goToArticle = (id) => {
                 <div class="post-title">{{ post.title }}</div>
                 <div class="post-meta">
                   <el-tag size="small" effect="plain">
-                    {{ post.category }}
+                    {{ getCategoryLabel(post.type) }}
                   </el-tag>
                   <span class="meta-views">
                     <el-icon><View /></el-icon>

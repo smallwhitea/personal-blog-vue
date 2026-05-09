@@ -1,14 +1,14 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { articles } from '@/mock/articles'
+import { posts } from '@/content/posts'
 
 const router = useRouter()
 
 // 统计标签
 const tagMap = computed(() => {
   const map = {}
-  articles.forEach((a) => {
+  posts.forEach((a) => {
     a.tags.forEach((t) => {
       if (!map[t]) map[t] = []
       map[t].push(a)

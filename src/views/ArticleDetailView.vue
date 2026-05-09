@@ -1,50 +1,64 @@
 <script setup>
-import { computed } from 'vue'
-import { useRoute, useRouter } from 'vue-router'
-import { articles, types } from '@/mock/articles'
+import { computed } from "vue";
+import { useRoute, useRouter } from "vue-router";
+import { posts, types } from "@/content/posts";
+import MarkdownRenderer from "@/components/MarkdownRenderer.vue";
 
-const route = useRoute()
-const router = useRouter()
+const route = useRoute();
+const router = useRouter();
 
 // 获取类型信息
 const getTypeInfo = (typeValue) => {
-  return types.find(t => t.value === typeValue) || types[0]
-}
+  return types.find((t) => t.value === typeValue) || types[0];
+};
 
 // 当前文章
-const articleId = computed(() => route.params.id)
-const article = computed(() => articles.find((a) => a.id === articleId.value) || null)
+const articleId = computed(() => route.params.id);
+const article = computed(
+  () => posts.find((a) => a.id === articleId.value) || null,
+);
 
 // 所有文章 id 列表
-const allIds = computed(() => articles.map((a) => a.id))
+const allIds = computed(() => posts.map((a) => a.id));
 
 // 上一篇 / 下一篇
 const prevArticle = computed(() => {
-  const idx = allIds.value.indexOf(articleId.value)
+  const idx = allIds.value.indexOf(articleId.value);
   if (idx > 0) {
-    const prevId = allIds.value[idx - 1]
-    return articles.find((a) => a.id === prevId)
+    const prevId = allIds.value[idx - 1];
+    return posts.find((a) => a.id === prevId);
   }
-  return null
-})
+  return null;
+});
 
 const nextArticle = computed(() => {
-  const idx = allIds.value.indexOf(articleId.value)
+  const idx = allIds.value.indexOf(articleId.value);
   if (idx !== -1 && idx < allIds.value.length - 1) {
-    const nextId = allIds.value[idx + 1]
-    return articles.find((a) => a.id === nextId)
+    const nextId = allIds.value[idx + 1];
+    return posts.find((a) => a.id === nextId);
   }
-  return null
-})
+  return null;
+});
+
+// 获取作者信息（兼容）
+const getAuthor = () => {
+  return "ArCl";
+};
+
+// 获取分类信息（兼容）
+const getCategory = (type) => {
+  const typeInfo = types.find((t) => t.value === type);
+  return typeInfo ? typeInfo.label : "其他";
+};
 
 // 跳转方法
 const goToArticle = (id) => {
-  router.push({ name: 'article-detail', params: { id } })
-}
+  router.push({ name: "article-detail", params: { id } });
+};
 
 const goBackToList = () => {
-  router.push({ name: 'posts' })
-}
+  router.push({ name: "posts" });
+};
 </script>
 
 <template>
@@ -65,28 +79,33 @@ const goBackToList = () => {
           </h1>
 
           <div class="article-meta">
-            <span class="mood-emoji">{{ article.mood || '😊' }}</span>
-            <el-tag 
-              size="small" 
-              effect="light" 
+            <span class="mood-emoji">{{ article.mood || "😊" }}</span>
+            <el-tag
+              size="small"
+              effect="light"
               :color="getTypeInfo(article.type).color"
-              style="background-color: rgba(76, 201, 255, 0.1); border: none;"
+              style="background-color: rgba(76, 201, 255, 0.1); border: none"
             >
               {{ getTypeInfo(article.type).label }}
             </el-tag>
             <span class="meta-item">
               <el-icon><User /></el-icon>
-              {{ article.author }}
+              {{ getAuthor() }}
             </span>
             <span class="meta-item">
               <el-icon><Calendar /></el-icon>
               {{ article.createTime }}
             </span>
             <el-tag class="meta-tag" size="small" effect="light" type="info">
-              {{ article.category }}
+              {{ getCategory(article.type) }}
             </el-tag>
             <div class="meta-tags">
-              <el-tag v-for="tag in article.tags" :key="tag" size="small" effect="plain">
+              <el-tag
+                v-for="tag in article.tags"
+                :key="tag"
+                size="small"
+                effect="plain"
+              >
                 {{ tag }}
               </el-tag>
             </div>
@@ -97,11 +116,11 @@ const goBackToList = () => {
       <!-- 文章内容 -->
       <el-card class="content-card" shadow="never">
         <div class="article-content">
-          <pre>{{ article.content }}</pre>
+          <MarkdownRenderer :content="article.content" />
         </div>
 
         <!-- 上一篇 / 下一篇 -->
-        <el-divider style="margin: 24px 0;" />
+        <el-divider style="margin: 24px 0" />
         <div class="article-footer-nav">
           <div class="nav-item">
             <span class="nav-label">上一篇</span>
@@ -147,7 +166,7 @@ const goBackToList = () => {
           </div>
           <div class="toc-item">
             <span class="toc-label">分类</span>
-            <span class="toc-value">{{ article.category }}</span>
+            <span class="toc-value">{{ getCategory(article.type) }}</span>
           </div>
           <div class="toc-item">
             <span class="toc-label">发布时间</span>
@@ -189,7 +208,10 @@ const goBackToList = () => {
 
 .back-btn {
   width: fit-content;
-  padding: 0;
+  padding: 6px 10px; // 关键：给文字/边框呼吸空间
+  padding-left: 3px;
+  border-radius: 8px; // 更符合你当前卡片圆角风格
+  line-height: 1; // 避免高度被行高撑得怪
 }
 
 .article-title {
@@ -233,18 +255,7 @@ const goBackToList = () => {
 }
 
 .article-content {
-  line-height: 1.8;
-  font-size: 16px;
-  color: var(--text);
-  pre {
-    white-space: pre-wrap;
-    word-break: break-word;
-    font-family: var(--mono);
-    font-size: 14px;
-    background: var(--code-bg);
-    padding: 16px;
-    border-radius: 8px;
-  }
+  // MarkdownRenderer 组件会处理所有样式
 }
 
 .article-footer-nav {

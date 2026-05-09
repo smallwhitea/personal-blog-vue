@@ -1,15 +1,16 @@
 <script setup>
 import { ref, computed } from 'vue'
 import { useRouter } from 'vue-router'
-import { articles } from '@/mock/articles'
+import { posts, types } from '@/content/posts'
 
 const router = useRouter()
 
-// 统计分类
+// 统计分类（现在用类型作为分类）
 const categoryMap = computed(() => {
   const map = {}
-  articles.forEach((a) => {
-    const c = a.category
+  posts.forEach((a) => {
+    const typeInfo = types.find(t => t.value === a.type)
+    const c = typeInfo ? typeInfo.label : '其他'
     if (!map[c]) map[c] = []
     map[c].push(a)
   })

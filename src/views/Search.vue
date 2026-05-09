@@ -1,11 +1,17 @@
 <script setup>
 import { ref, computed, watch } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
-import { articles } from '@/mock/articles'
+import { posts, types } from '@/content/posts'
 
 const route = useRoute()
 const router = useRouter()
 const searchKeyword = ref('')
+
+// 获取分类标签
+const getCategoryLabel = (type) => {
+  const typeInfo = types.find(t => t.value === type)
+  return typeInfo ? typeInfo.label : '其他'
+}
 
 // 从路由参数中获取搜索关键词
 const getSearchKeywordFromRoute = () => {
@@ -26,7 +32,7 @@ const searchResults = computed(() => {
     return []
   }
 
-  return articles.filter((article) => {
+  return posts.filter((article) => {
     const titleMatch = article.title.toLowerCase().includes(keyword)
     const summaryMatch = article.summary.toLowerCase().includes(keyword)
     const tagMatch = article.tags.some((tag) => tag.toLowerCase().includes(keyword))
@@ -75,7 +81,7 @@ const highlightText = (text, keyword) => {
           <div class="result-header">
             <div class="result-title" v-html="highlightText(article.title, searchKeyword)"></div>
             <div class="result-meta">
-              <el-tag size="small" effect="plain">{{ article.category }}</el-tag>
+              <el-tag size="small" effect="plain">{{ getCategoryLabel(article.type) }}</el-tag>
               <span class="meta-item">
                 <el-icon><View /></el-icon>
                 {{ article.views }}

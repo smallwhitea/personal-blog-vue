@@ -117,9 +117,10 @@ function openDrawer() {
   background-color: var(--bg-card);
   padding: 0;
   height: 64px;
+  overflow: hidden;
 }
 
-// Dark 下的布局头部和底部：渐变 + 毛玻璃
+// Dark 下的布局头部和底部：渐变 + 毛玻璃 + 底边流光线
 .dark .layout-header {
   border-bottom: 1px solid rgba(255, 255, 255, 0.1);
   background: linear-gradient(
@@ -129,6 +130,30 @@ function openDrawer() {
   );
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
+  position: relative;
+  z-index: 1;
+
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--neon-blue) 20%,
+      var(--neon-purple) 50%,
+      var(--neon-pink) 80%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    background-repeat: no-repeat;
+    animation: neon-flow-bottom 8s linear infinite;
+    opacity: 0.75;
+    pointer-events: none;
+  }
 }
 
 .dark .layout-footer {
@@ -140,6 +165,46 @@ function openDrawer() {
   );
   backdrop-filter: blur(calc(var(--glass-blur) - 4px));
   -webkit-backdrop-filter: blur(calc(var(--glass-blur) - 4px));
+  position: relative;
+  z-index: 1;
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: -1px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      var(--neon-pink) 20%,
+      var(--neon-purple) 50%,
+      var(--neon-blue) 80%,
+      transparent 100%
+    );
+    background-size: 200% 100%;
+    background-repeat: no-repeat;
+    animation: neon-flow-bottom 6s linear infinite reverse;
+    opacity: 0.65;
+    pointer-events: none;
+  }
+}
+
+@keyframes neon-flow-bottom {
+  0% {
+    background-position: 0% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .dark .layout-header::before,
+  .dark .layout-footer::before {
+    animation: none !important;
+  }
 }
 
 @media (max-width: 900px) {
