@@ -112,11 +112,23 @@ const highlightText = (text, keyword) => {
 </template>
 
 <style scoped lang="scss">
+// 流光边框动画
+@keyframes neon-flow-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .search-page {
   display: flex;
   flex-direction: column;
   gap: var(--spacing-base);
 }
+
+// Dark 下的卡片流光由全局样式统一处理
 
 .search-header-card {
   .search-header {

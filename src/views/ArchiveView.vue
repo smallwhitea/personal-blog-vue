@@ -92,6 +92,16 @@ const goToArticle = (id) => {
 </template>
 
 <style scoped lang="scss">
+// 流光边框动画
+@keyframes neon-flow-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .archive-page {
   display: flex;
   flex-direction: column;
@@ -100,6 +110,8 @@ const goToArticle = (id) => {
 .archive-card {
   border-radius: 12px;
 }
+
+// Dark 下的卡片流光由全局样式统一处理
 .card-header {
   display: flex;
   justify-content: space-between;

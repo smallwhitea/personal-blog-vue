@@ -117,6 +117,16 @@ const goToArticle = (id) => {
 </template>
 
 <style scoped lang="scss">
+// 流光边框动画
+@keyframes neon-flow-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .category-page {
   display: flex;
   flex-direction: column;
@@ -126,6 +136,13 @@ const goToArticle = (id) => {
 .nav-card,
 .list-card {
   border-radius: var(--border-radius-lg);
+}
+
+// Dark 下的分类项：先去掉所有装饰确保内容可见
+:global(.dark) .category-item {
+  > * {
+    position: relative;
+  }
 }
 
 .card-header {

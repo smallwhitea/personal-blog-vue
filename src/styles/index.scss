@@ -85,29 +85,37 @@
   --border-lighter: rgba(255, 255, 255, 0.08);
   --border-extra-light: rgba(255, 255, 255, 0.06);
 
-  // 5. 背景色（深黑渐变底 + 装饰层
+  // 5. 背景色（深黑渐变底 + 赛博氛围光）
   --bg-base: #050712;
   --bg-page: rgba(10, 12, 24, 0.72);
   --bg-card: rgba(16, 18, 34, 0.62);
   --bg-hover: rgba(255, 255, 255, 0.06);
   --bg-elevated: rgba(16, 18, 34, 0.72);
   --bg-gradient:
+    /* 左侧：深蓝/青色氛围 */
     radial-gradient(
-      1100px circle at 20% 0%,
-      rgba(168, 85, 247, 0.22),
-      transparent 55%
+      1100px circle at 12% 18%,
+      rgba(34, 247, 210, 0.14),
+      transparent 58%
     ),
     radial-gradient(
-      900px circle at 85% 20%,
+      900px circle at 18% 8%,
       rgba(76, 201, 255, 0.18),
-      transparent 55%
+      transparent 60%
     ),
+    /* 右侧：紫色氛围 */
     radial-gradient(
-      700px circle at 60% 95%,
-      rgba(255, 79, 216, 0.12),
-      transparent 55%
+      1100px circle at 86% 22%,
+      rgba(168, 85, 247, 0.22),
+      transparent 60%
     ),
-    linear-gradient(180deg, #050712 0%, #060a18 40%, #050712 100%);
+    /* 底部：紫粉氛围光 */
+    radial-gradient(
+      900px circle at 60% 96%,
+      rgba(255, 79, 216, 0.13),
+      transparent 58%
+    ),
+    linear-gradient(180deg, #050712 0%, #060a18 42%, #050712 100%);
   --bg-noise-opacity: 0.06;
 
   // 6. 霓虹描边/光晕
@@ -221,23 +229,23 @@ body {
   .el-card__header {
     border-bottom: 1px solid var(--border-extra-light);
     padding: var(--spacing-base) var(--spacing-md);
+    position: relative;
+    z-index: 10; // 强制在任何装饰层之上
   }
 
   .el-card__body {
     padding: var(--spacing-md);
+    position: relative;
+    z-index: 10; // 强制在任何装饰层之上
+  }
+
+  .el-card__footer {
+    position: relative;
+    z-index: 10; // 强制在任何装饰层之上
   }
 }
 
-// ==================== 流光边框 keyframes ====================
-@keyframes neon-flow {
-  from {
-    transform: rotate(0deg);
-  }
-  to {
-    transform: rotate(360deg);
-  }
-}
-
+// ==================== 流光边框 keyframes（保留但优化） ====================
 @keyframes neon-flow-slow {
   from {
     transform: rotate(0deg);
@@ -247,86 +255,54 @@ body {
   }
 }
 
-// Dark 下的卡片：毛玻璃 + 霓虹流光边框（conic + mask）
+// Dark 下的卡片：玻璃质感 + 安全霓虹流动渐变边框
 .dark .el-card {
-  backdrop-filter: blur(var(--glass-blur));
-  -webkit-backdrop-filter: blur(var(--glass-blur));
   position: relative;
   z-index: 1;
+  /* 玻璃质感：不用大面积 blur，靠半透明 + 细边框 + 柔和阴影实现 */
+  background-color: rgba(16, 18, 34, 0.64);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.42),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04);
 
+  // 伪元素装饰层必须在正文之下（z-index: 0）
   &::before {
     content: "";
     position: absolute;
     inset: 0;
+    z-index: 0; // 严格在正文下面
     border-radius: inherit;
     padding: 1px;
     background: conic-gradient(
       from 0deg,
       transparent 0deg,
-      rgba(76, 201, 255, 0.35) 45deg,
-      rgba(168, 85, 247, 0.25) 100deg,
-      rgba(255, 79, 216, 0.18) 150deg,
-      transparent 200deg,
+      rgba(76, 201, 255, 0.3) 45deg,
+      rgba(168, 85, 247, 0.2) 120deg,
+      rgba(255, 79, 216, 0.15) 190deg,
       transparent 240deg,
-      rgba(34, 247, 210, 0.2) 290deg,
-      rgba(76, 201, 255, 0.3) 340deg,
-      transparent 360deg
+      transparent 300deg,
+      rgba(34, 247, 210, 0.18) 340deg,
+      rgba(76, 201, 255, 0.25) 360deg
     );
     -webkit-mask:
       linear-gradient(#000 0 0) content-box,
       linear-gradient(#000 0 0);
     -webkit-mask-composite: xor;
     mask-composite: exclude;
-    opacity: 0.7;
-    animation: neon-flow-slow 18s linear infinite;
+    opacity: 0.42;
+    animation: neon-flow-slow 25s linear infinite; // 缓慢流动动画
     pointer-events: none;
   }
 
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    border-radius: inherit;
-    padding: 2px;
-    background: conic-gradient(
-      from 0deg,
-      transparent 0deg,
-      rgba(76, 201, 255, 0.12) 50deg,
-      rgba(168, 85, 247, 0.08) 110deg,
-      rgba(255, 79, 216, 0.06) 170deg,
-      transparent 220deg,
-      transparent 260deg,
-      rgba(34, 247, 210, 0.09) 310deg,
-      rgba(76, 201, 255, 0.1) 350deg,
-      transparent 360deg
-    );
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0.4;
-    animation: neon-flow 12s linear infinite reverse;
-    filter: blur(2.5px);
-    pointer-events: none;
-  }
-
-  &:hover {
-    &::before {
-      animation-duration: 8s;
-      opacity: 1;
-    }
-    &::after {
-      animation-duration: 6s;
-      filter: blur(3.5px);
-      opacity: 0.6;
-    }
+  // 悬停时略微增强边框
+  &:hover::before {
+    opacity: 0.65;
   }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dark .el-card::before,
-  .dark .el-card::after {
+  .dark .el-card::before {
     animation: none !important;
   }
 }
@@ -464,23 +440,61 @@ pre {
   color: var(--text-primary);
 }
 
+// 滚动条样式（原生 scrollbar）：细 + 霓虹渐变 thumb（更精致）
+*::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+*::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.18);
+  border-radius: 999px;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+// Dark 下的滚动条：蓝紫/粉紫霓虹渐变
+.dark * {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: rgba(168, 85, 247, 0.65) rgba(0, 0, 0, 0.25);
+}
+
 .dark *::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+  width: 6px;
+  height: 6px;
 }
 
 .dark *::-webkit-scrollbar-thumb {
   background: linear-gradient(
     180deg,
-    rgba(76, 201, 255, 0.25),
-    rgba(255, 79, 216, 0.18)
+    rgba(76, 201, 255, 0.62),
+    rgba(168, 85, 247, 0.58),
+    rgba(255, 79, 216, 0.52)
   );
-  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background-clip: padding-box;
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.18),
+    0 0 10px rgba(76, 201, 255, 0.14);
+}
+
+.dark *::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(
+    180deg,
+    rgba(76, 201, 255, 0.78),
+    rgba(168, 85, 247, 0.7),
+    rgba(255, 79, 216, 0.66)
+  );
+  box-shadow:
+    inset 0 0 0 1px rgba(0, 0, 0, 0.14),
+    0 0 14px rgba(168, 85, 247, 0.18);
 }
 
 .dark *::-webkit-scrollbar-track {
-  background: rgba(255, 255, 255, 0.04);
+  background: rgba(0, 0, 0, 0.22);
 }
 
 // ========== 响应式断点 ==========

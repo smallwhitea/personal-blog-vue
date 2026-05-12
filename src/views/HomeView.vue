@@ -215,7 +215,8 @@ const goToPosts = () => {
 </template>
 
 <style scoped lang="scss">
-@keyframes neon-flow {
+// 优化后的流光边框动画：更慢，更轻量
+@keyframes neon-flow-slow {
   from {
     transform: rotate(0deg);
   }
@@ -271,77 +272,10 @@ const goToPosts = () => {
   }
 }
 
-// Dark 下的 Banner：霓虹光晕 + 流光边框（inset 0 避免撑出滚动条）
-.dark .banner-card {
-  position: relative;
-  overflow: hidden;
-
-  &::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 2;
-    border-radius: inherit;
-    padding: 2px;
-    background: conic-gradient(
-      from 0deg,
-      transparent 0deg,
-      rgba(76, 201, 255, 0.4) 30deg,
-      rgba(168, 85, 247, 0.3) 80deg,
-      rgba(255, 79, 216, 0.25) 130deg,
-      transparent 180deg,
-      transparent 220deg,
-      rgba(34, 247, 210, 0.28) 270deg,
-      rgba(76, 201, 255, 0.35) 330deg,
-      transparent 360deg
-    );
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    opacity: 0.88;
-    animation: neon-flow 10s linear infinite;
-    pointer-events: none;
-  }
-
-  &::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    border-radius: inherit;
-    background:
-      radial-gradient(
-        620px circle at 18% 12%,
-        rgba(76, 201, 255, 0.16),
-        transparent 60%
-      ),
-      radial-gradient(
-        520px circle at 82% 36%,
-        rgba(255, 79, 216, 0.1),
-        transparent 62%
-      ),
-      radial-gradient(
-        420px circle at 55% 92%,
-        rgba(168, 85, 247, 0.1),
-        transparent 64%
-      );
-    opacity: 0.95;
-  }
-
+// Dark 下的 Banner：先去掉所有装饰确保内容可见
+:global(.dark) .banner-card {
   .banner-inner {
     position: relative;
-    z-index: 3;
-  }
-
-  .banner-title {
-    text-shadow: 0 0 24px rgba(76, 201, 255, 0.16);
-  }
-
-  .banner-avatar {
-    border: 1px solid rgba(255, 255, 255, 0.16);
   }
 }
 
@@ -524,6 +458,12 @@ const goToPosts = () => {
   .banner-title {
     font-size: 28px;
   }
+
+  .banner-card {
+    .banner-inner {
+      gap: var(--spacing-base);
+    }
+  }
 }
 
 @media (max-width: 768px) {
@@ -539,11 +479,42 @@ const goToPosts = () => {
   .banner-title {
     font-size: 24px;
   }
+
+  .post-top {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--spacing-xs);
+  }
+
+  .post-meta {
+    flex-wrap: wrap;
+  }
+
+  .tags-cloud {
+    justify-content: flex-start;
+  }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .dark .banner-card::before {
-    animation: none !important;
+@media (max-width: 480px) {
+  .banner-title {
+    font-size: 22px;
+  }
+
+  .post-title {
+    font-size: 16px;
+  }
+
+  .post-excerpt {
+    font-size: 14px;
+  }
+
+  .banner-actions {
+    flex-direction: column;
+    width: 100%;
+
+    .el-button {
+      width: 100%;
+    }
   }
 }
 </style>

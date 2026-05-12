@@ -8,20 +8,23 @@ let animationFrameId = null;
 let lastMouseX = 0;
 let lastMouseY = 0;
 let lastSpawnTime = 0;
+let isPaused = false; // 新增：暂停状态标识
+let hasMousePosition = false;
 
-const MAX_PARTICLES = 80;
-const PARTICLE_LIFE_TIME = 650;
+const MAX_PARTICLES = 30;
+const PARTICLE_LIFE_TIME = 450;
+const SPAWN_INTERVAL = 80;
 
 const colors = [
-  "rgba(0, 245, 255, 0.95)",
-  "rgba(76, 201, 255, 0.9)",
-  "rgba(168, 85, 247, 0.9)",
-  "rgba(255, 79, 216, 0.85)",
-  "rgba(255, 230, 109, 0.85)",
-  "rgba(255, 255, 255, 0.95)",
+  "rgba(0, 245, 255, 0.85)",
+  "rgba(76, 201, 255, 0.8)",
+  "rgba(168, 85, 247, 0.8)",
+  "rgba(255, 79, 216, 0.75)",
+  "rgba(255, 230, 109, 0.75)",
+  "rgba(255, 255, 255, 0.85)",
 ];
 
-const shapes = ["circle", "diamond", "star", "line", "square"];
+const shapes = ["circle", "diamond", "star", "line"]; // 恢复更多形状但简化
 
 const checkMobile = () => {
   isMobile.value = window.innerWidth <= 768;
@@ -33,9 +36,9 @@ const clearParticles = () => {
   particles.value = [];
 };
 
-const spawnParticle = (x, y, big = false) => {
-  if (particles.value.length >= MAX_PARTICLES) {
-    particles.value.shift();
+const spawnParticle = (x, y) => {
+  if (particles.value.length >= MAX_PARTICLES || isPaused) {
+    return; // 如果暂停或达到上限，不生成
   }
 
   const shape = shapes[Math.floor(Math.random() * shapes.length)];
@@ -47,10 +50,10 @@ const spawnParticle = (x, y, big = false) => {
     x,
     y,
 
-    vx: random(-1.8, 1.8),
-    vy: random(-1.8, 1.8),
+    vx: random(-0.8, 0.8), // 降低速度
+    vy: random(-0.8, 0.8),
 
-    size: big ? random(10, 16) : random(3, 8),
+    size: random(2, 5), // 减小粒子尺寸
 
     color: colors[Math.floor(Math.random() * colors.length)],
 
@@ -60,38 +63,45 @@ const spawnParticle = (x, y, big = false) => {
     shape,
 
     rotate: random(0, 360),
-    rotateSpeed: random(-5, 5),
+    rotateSpeed: random(-2, 2), // 降低旋转速度
 
-    scale: random(0.8, 1.4),
+    scale: random(0.9, 1.1), // 缩小缩放范围
   });
 };
 
 const handleMouseMove = (e) => {
-  if (isMobile.value) return;
+  if (isMobile.value || isPaused) return;
+
+  // 按住鼠标拖动时不生成粒子，避免拖动滚动条卡顿
+  if (e.buttons === 1) return;
+
+  // 鼠标在右侧滚动条区域时不生成粒子
+  if (e.clientX > window.innerWidth - 24) return;
 
   const now = Date.now();
   const x = e.clientX;
   const y = e.clientY;
 
-  if (now - lastSpawnTime > 30) {
+  // 第一次移动只记录位置，避免从 0,0 生成一串粒子
+  if (!hasMousePosition) {
+    lastMouseX = x;
+    lastMouseY = y;
+    hasMousePosition = true;
+    return;
+  }
+
+  if (now - lastSpawnTime > SPAWN_INTERVAL) {
     const distance = Math.sqrt(
       Math.pow(x - lastMouseX, 2) + Math.pow(y - lastMouseY, 2),
     );
 
-    // 限制快速甩鼠标时一次性生成太多粒子
-    const steps = Math.min(4, Math.max(1, Math.floor(distance / 28)));
+    const steps = Math.min(1, Math.max(1, Math.floor(distance / 60)));
 
     for (let i = 1; i <= steps; i++) {
       const t = i / steps;
-
       const px = lastMouseX + (x - lastMouseX) * t;
       const py = lastMouseY + (y - lastMouseY) * t;
-
       spawnParticle(px, py);
-
-      if (Math.random() < 0.08) {
-        spawnParticle(px, py, true);
-      }
     }
 
     lastSpawnTime = now;
@@ -102,6 +112,10 @@ const handleMouseMove = (e) => {
 };
 
 const animate = () => {
+  if (isPaused) {
+    return;
+  }
+
   const now = performance.now();
 
   particles.value = particles.value
@@ -116,12 +130,33 @@ const animate = () => {
         rotate: p.rotate + p.rotateSpeed,
         life,
         opacity: life,
-        scale: p.scale + 0.002,
+        scale: p.scale + 0.001,
       };
     })
-    .filter((p) => p.life > 0.02);
+    .filter((p) => p.life > 0.05);
 
   animationFrameId = requestAnimationFrame(animate);
+};
+
+const pause = () => {
+  isPaused = true;
+  clearParticles();
+
+  if (animationFrameId) {
+    cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
+  }
+};
+
+const resume = () => {
+  if (isMobile.value) return;
+
+  isPaused = false;
+  hasMousePosition = false;
+
+  if (!animationFrameId) {
+    animationFrameId = requestAnimationFrame(animate);
+  }
 };
 
 onMounted(() => {
@@ -131,8 +166,10 @@ onMounted(() => {
   window.addEventListener("mousemove", handleMouseMove, { passive: true });
 
   // 页面失焦 / 鼠标离开窗口时强制清理，避免残留
-  window.addEventListener("mouseleave", clearParticles);
-  window.addEventListener("blur", clearParticles);
+  window.addEventListener("mouseleave", pause);
+  window.addEventListener("blur", pause);
+  window.addEventListener("mouseenter", resume);
+  window.addEventListener("focus", resume);
 
   animate();
 });
@@ -140,12 +177,17 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener("resize", checkMobile);
   window.removeEventListener("mousemove", handleMouseMove);
-  window.removeEventListener("mouseleave", clearParticles);
-  window.removeEventListener("blur", clearParticles);
+  window.removeEventListener("mouseleave", pause);
+  window.removeEventListener("blur", pause);
+  window.removeEventListener("mouseenter", resume);
+  window.removeEventListener("focus", resume);
 
   if (animationFrameId) {
     cancelAnimationFrame(animationFrameId);
+    animationFrameId = null;
   }
+
+  clearParticles();
 });
 </script>
 
@@ -156,15 +198,13 @@ onUnmounted(() => {
       :key="particle.id"
       :class="['particle', `particle-${particle.shape}`]"
       :style="{
-        left: particle.x + 'px',
-        top: particle.y + 'px',
         width: particle.size + 'px',
         height: particle.size + 'px',
         opacity: particle.opacity,
         background: particle.shape === 'star' ? 'transparent' : particle.color,
         color: particle.color,
-        boxShadow: `0 0 ${particle.size}px ${particle.color}`,
         transform: `
+          translate3d(${particle.x}px, ${particle.y}px, 0)
           translate(-50%, -50%)
           rotate(${particle.rotate}deg)
           scale(${particle.scale})

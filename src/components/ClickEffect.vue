@@ -4,7 +4,14 @@ import { ref, onMounted, onUnmounted } from "vue";
 const isMobile = ref(false);
 const effects = ref([]);
 
-const texts = ["轨迹", "彩虹", "我怀念的", "借口", "回到过去", "云烟成雨"];
+const texts = [
+  "怎么隐藏",
+  "我的悲伤",
+  "失去你的地方",
+  "你的发香",
+  "散的匆忙",
+  "我已经跟不上",
+];
 
 const colors = [
   "#00f5ff",

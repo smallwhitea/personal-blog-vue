@@ -23,9 +23,10 @@
   position: fixed;
   inset: 0;
   pointer-events: none; // 不影响点击和滚动
-  z-index: 0; // 层级低于内容层
+  z-index: 0; // 低于 .layout-body（z-index:1），避免与正文错误叠层
   overflow: hidden;
   display: none; // 默认 Light 模式下隐藏
+  isolation: isolate; // 把 mix-blend 限制在本层，避免与下层整页错误合成导致「只剩光在动」
 
   // Dark 模式下显示（使用 :deep() 来穿透 scoped）
   html.dark & {
@@ -43,11 +44,11 @@
 .glow {
   position: absolute;
   border-radius: 50%;
-  filter: blur(60px); // 降低模糊让光斑更实
-  opacity: 0.6; // 提高透明度
-  mix-blend-mode: screen;
-  will-change: transform; // 性能优化
-  animation: float 12s ease-in-out infinite; // 加快动画
+  filter: blur(60px);
+  opacity: 0.42; // normal 混合下略提一点，仍低于正文对比度风险
+  mix-blend-mode: normal; // 避免 screen/plus-lighter 与整页合成导致内容「只剩光」
+  will-change: transform;
+  animation: float 12s ease-in-out infinite;
 }
 
 .glow-1 {
@@ -100,7 +101,7 @@
     linear-gradient(to right, rgba(76, 201, 255, 0.12) 1px, transparent 1px),
     linear-gradient(to bottom, rgba(168, 85, 247, 0.08) 1px, transparent 1px);
   background-size: 50px 50px;
-  opacity: 0.7; // 提高透明度
+  opacity: 0.45; // 略弱，避免和正文区抢视觉
   mask-image: radial-gradient(
     circle at center,
     black,
@@ -120,7 +121,7 @@
     transparent 4px
   );
   background-size: 100% 8px;
-  opacity: 0.5; // 提高透明度
+  opacity: 0.28;
   animation: scanMove 6s linear infinite; // 加快动画
 }
 

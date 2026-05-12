@@ -186,6 +186,16 @@ const projectExperiences = ref([
 </template>
 
 <style scoped lang="scss">
+// 流光边框动画
+@keyframes neon-flow-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .about-page {
   display: flex;
   flex-direction: column;
@@ -195,6 +205,8 @@ const projectExperiences = ref([
 .section-card {
   border-radius: 12px;
 }
+
+// Dark 下的卡片流光由全局样式统一处理
 .profile-inner {
   display: flex;
   flex-direction: column;

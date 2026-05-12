@@ -33,23 +33,23 @@ const toggleTheme = () => {
       >
         <el-icon><Menu /></el-icon>
       </el-button>
-      <div class="brand">{{ siteConfig.name }}</div>
+      <div class="brand" aria-label="Site title">{{ siteConfig.name }}</div>
     </div>
 
-        <el-menu
-          class="nav"
-          mode="horizontal"
-          :default-active="active"
-          :ellipsis="false"
-          router
-        >
-          <el-menu-item index="/">首页</el-menu-item>
-          <el-menu-item index="/posts">记录</el-menu-item>
-          <el-menu-item index="/category">分类</el-menu-item>
-          <el-menu-item index="/tags">标签</el-menu-item>
-          <el-menu-item index="/archive">归档</el-menu-item>
-          <el-menu-item index="/about">关于</el-menu-item>
-        </el-menu>
+    <el-menu
+      class="nav"
+      mode="horizontal"
+      :default-active="active"
+      :ellipsis="false"
+      router
+    >
+      <el-menu-item index="/">首页</el-menu-item>
+      <el-menu-item index="/posts">记录</el-menu-item>
+      <el-menu-item index="/category">分类</el-menu-item>
+      <el-menu-item index="/tags">标签</el-menu-item>
+      <el-menu-item index="/archive">归档</el-menu-item>
+      <el-menu-item index="/about">关于</el-menu-item>
+    </el-menu>
 
     <div class="right">
       <el-button
@@ -92,10 +92,33 @@ const toggleTheme = () => {
 
 .brand {
   font-weight: 700;
-  letter-spacing: 0.5px;
-  color: var(--text-primary);
-  font-size: 20px;
+  letter-spacing: 0.8px;
   white-space: nowrap;
+  user-select: none;
+  background: linear-gradient(
+    135deg,
+    #4cc9ff 0%,
+    #a855f7 35%,
+    #ff4fd8 70%,
+    #22f7d2 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow:
+    0 0 18px rgba(76, 201, 255, 0.24),
+    0 0 32px rgba(168, 85, 247, 0.16),
+    0 0 48px rgba(255, 79, 216, 0.1);
+  font-family:
+    "ZCOOL KuaiLe",
+    "Noto Sans SC",
+    "PingFang SC",
+    "Hiragino Sans GB",
+    "Microsoft YaHei",
+    system-ui,
+    sans-serif;
+  font-size: 20px;
+  letter-spacing: 1.2px;
 }
 
 .nav {
@@ -107,7 +130,9 @@ const toggleTheme = () => {
 }
 
 .nav :deep(.el-menu-item) {
-  transition: color 0.2s ease, text-shadow 0.2s ease;
+  transition:
+    color 0.2s ease,
+    text-shadow 0.2s ease;
 }
 
 .right {
@@ -137,9 +162,10 @@ const toggleTheme = () => {
   }
 }
 
-// Dark 下的头部样式
-.dark .brand {
-  text-shadow: 0 0 18px rgba(76, 201, 255, 0.12);
+// Light 下也保留少量渐变质感，但弱一些
+:root:not(.dark) .brand {
+  text-shadow: none;
+  opacity: 0.95;
 }
 
 .dark .nav :deep(.el-menu-item) {
@@ -190,6 +216,7 @@ const toggleTheme = () => {
 
   .brand {
     font-size: 18px;
+    letter-spacing: 1px;
   }
 }
 </style>

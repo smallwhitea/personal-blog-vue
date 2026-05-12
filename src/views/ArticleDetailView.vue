@@ -181,12 +181,24 @@ const goBackToList = () => {
 </template>
 
 <style scoped lang="scss">
+// 流光边框动画
+@keyframes neon-flow-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .article-detail-page {
   display: grid;
   grid-template-columns: 1fr 260px;
   gap: 16px;
   align-items: flex-start;
 }
+
+// Dark 下的卡片流光由全局样式统一处理
 
 .article-main {
   display: flex;

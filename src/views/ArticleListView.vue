@@ -195,6 +195,16 @@ const handleTypeChange = () => {
 </template>
 
 <style scoped lang="scss">
+// 流光边框动画
+@keyframes neon-flow-slow {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
 .article-list-page {
   display: flex;
   flex-direction: column;
@@ -204,6 +214,85 @@ const handleTypeChange = () => {
 .filter-card {
   border-radius: 12px;
 }
+
+// Dark 下的流光效果 (临时注释掉，确保先能看到内容)
+// :global(.dark) .filter-card,
+// :global(.dark) .list-card {
+//   position: relative;
+//   overflow: hidden;
+
+//   &::before {
+//     content: "";
+//     position: absolute;
+//     inset: 0;
+//     z-index: 2;
+//     border-radius: inherit;
+//     padding: 2px;
+//     background: conic-gradient(
+//       from 0deg,
+//       transparent 0deg,
+//       rgba(76, 201, 255, 0.3) 45deg,
+//       rgba(168, 85, 247, 0.2) 120deg,
+//       rgba(255, 79, 216, 0.15) 190deg,
+//       transparent 240deg,
+//       transparent 300deg,
+//       rgba(34, 247, 210, 0.18) 340deg,
+//       rgba(76, 201, 255, 0.25) 360deg
+//     );
+//     -webkit-mask:
+//       linear-gradient(#000 0 0) content-box,
+//       linear-gradient(#000 0 0);
+//     -webkit-mask-composite: xor;
+//     mask-composite: exclude;
+//     opacity: 0.75;
+//     animation: neon-flow-slow 25s linear infinite;
+//     pointer-events: none;
+//   }
+
+//   &::after {
+//     content: "";
+//     position: absolute;
+//     inset: 0;
+//     z-index: 1;
+//     pointer-events: none;
+//     border-radius: inherit;
+//     background:
+//       radial-gradient(
+//         620px circle at 18% 12%,
+//         rgba(76, 201, 255, 0.14),
+//         transparent 60%
+//       ),
+//       radial-gradient(
+//         520px circle at 82% 36%,
+//         rgba(255, 79, 216, 0.09),
+//         transparent 62%
+//       ),
+//       radial-gradient(
+//         420px circle at 55% 92%,
+//         rgba(168, 85, 247, 0.09),
+//         transparent 64%
+//       );
+//     opacity: 0.9;
+//   }
+
+//   :deep(.el-card__header),
+//   :deep(.el-card__body) {
+//     position: relative;
+//     z-index: 3;
+//   }
+// }
+
+// @media (prefers-reduced-motion: reduce) {
+//   :global(.dark) .filter-card::before,
+//   :global(.dark) .list-card::before {
+//     animation: none !important;
+//     opacity: 0.5;
+//   }
+//   :global(.dark) .filter-card::after,
+//   :global(.dark) .list-card::after {
+//     opacity: 0.6;
+//   }
+// }
 .filter-row {
   display: flex;
   flex-wrap: wrap;
